@@ -29,7 +29,7 @@ const SIDE_OPTIONS = [
   { id: 's4', name: '一日野菜-和風沙拉', cal: 50, pro: 2, fib: 4, sod: 300, carb: 8, price: 45, type: 'fiber' },
   { id: 's5', name: '微波-青花菜', cal: 30, pro: 2, fib: 3, sod: 100, carb: 4, price: 39, type: 'fiber' },
   { id: 's6', name: '關東煮-白蘿蔔x2', cal: 15, pro: 0, fib: 2, sod: 200, carb: 3, price: 30, type: 'fiber' },
-  // 其他單點 (飲品/水果/點心) - 新增
+  // 其他單點 (飲品/水果/點心)
   { id: 'e1', name: '香蕉 (1根)', cal: 90, pro: 1.5, fib: 2.0, sod: 0, carb: 23, price: 20, type: 'extra' },
   { id: 'e2', name: '無糖拿鐵 (中)', cal: 150, pro: 8, fib: 0, sod: 100, carb: 10, price: 45, type: 'extra' },
   { id: 'e3', name: '原味生乳捲 (片)', cal: 250, pro: 4, fib: 0, sod: 150, carb: 25, price: 50, type: 'extra' },
@@ -111,16 +111,17 @@ const OnboardingScreen = ({ onComplete }) => {
               <div className="space-y-4">
                 <label className="block">
                   <span className="text-sm font-semibold text-slate-600">怎麼稱呼您？</span>
-                  <input type="text" className="mt-1 block w-full rounded-xl border-slate-200 bg-slate-50 p-3 outline-none focus:ring-2 focus:ring-emerald-500" placeholder="例如：小美" value={profile.name} onChange={(e) => setProfile({...profile, name: e.target.value})} />
+                  {/* 加入 text-base 防止 iOS 放大 */}
+                  <input type="text" className="mt-1 block w-full text-base rounded-xl border-slate-200 bg-slate-50 p-3 outline-none focus:ring-2 focus:ring-emerald-500" placeholder="例如：小美" value={profile.name} onChange={(e) => setProfile({...profile, name: e.target.value})} />
                 </label>
                 <div className="grid grid-cols-2 gap-4">
                   <button onClick={() => setProfile({...profile, gender: 'male'})} className={`p-3 rounded-xl border-2 transition-all font-bold ${profile.gender === 'male' ? 'border-emerald-500 bg-emerald-50 text-emerald-700' : 'border-slate-100 text-slate-400'}`}>男性</button>
                   <button onClick={() => setProfile({...profile, gender: 'female'})} className={`p-3 rounded-xl border-2 transition-all font-bold ${profile.gender === 'female' ? 'border-emerald-500 bg-emerald-50 text-emerald-700' : 'border-slate-100 text-slate-400'}`}>女性</button>
                 </div>
                 <div className="grid grid-cols-3 gap-3">
-                  <label className="block text-center"><span className="text-xs text-slate-500">年齡</span><input type="number" min="8" className="mt-1 w-full text-center p-2 bg-slate-50 rounded-lg border-0 outline-none" value={profile.age} onChange={(e) => setProfile({...profile, age: e.target.value})}/></label>
-                  <label className="block text-center"><span className="text-xs text-slate-500">身高(cm)</span><input type="number" className="mt-1 w-full text-center p-2 bg-slate-50 rounded-lg border-0 outline-none" value={profile.height} onChange={(e) => setProfile({...profile, height: e.target.value})}/></label>
-                  <label className="block text-center"><span className="text-xs text-slate-500">體重(kg)</span><input type="number" className="mt-1 w-full text-center p-2 bg-slate-50 rounded-lg border-0 outline-none" value={profile.weight} onChange={(e) => setProfile({...profile, weight: e.target.value})}/></label>
+                  <label className="block text-center"><span className="text-xs text-slate-500">年齡</span><input type="number" min="8" className="mt-1 w-full text-base text-center p-2 bg-slate-50 rounded-lg border-0 outline-none" value={profile.age} onChange={(e) => setProfile({...profile, age: e.target.value})}/></label>
+                  <label className="block text-center"><span className="text-xs text-slate-500">身高(cm)</span><input type="number" className="mt-1 w-full text-base text-center p-2 bg-slate-50 rounded-lg border-0 outline-none" value={profile.height} onChange={(e) => setProfile({...profile, height: e.target.value})}/></label>
+                  <label className="block text-center"><span className="text-xs text-slate-500">體重(kg)</span><input type="number" className="mt-1 w-full text-base text-center p-2 bg-slate-50 rounded-lg border-0 outline-none" value={profile.weight} onChange={(e) => setProfile({...profile, weight: e.target.value})}/></label>
                 </div>
               </div>
             </div>
@@ -164,7 +165,7 @@ const OnboardingScreen = ({ onComplete }) => {
                 <h3 className="text-sm font-bold flex items-center gap-2 px-2"><Target className="w-4 h-4 text-emerald-600"/> 健康管理目標</h3>
                 <div className="flex gap-2">
                   {[{ val: '0', label: '維持現況' }, { val: '0.3', label: '健康輕體' }, { val: '0.5', label: '積極管理' }].map((g) => (
-                    <button key={g.val} onClick={() => setProfile({...profile, goal: g.val})} className={`flex-1 p-2 rounded-xl border text-sm font-bold transition-all ${profile.goal === g.val ? 'bg-emerald-600 text-white border-emerald-600 shadow-md' : 'border-slate-200 text-slate-500 hover:bg-slate-50'}`}>
+                    <button key={g.val} onClick={() => setProfile({...profile, goal: g.val})} className={`flex-1 py-3 px-1 rounded-xl border text-sm font-bold transition-all ${profile.goal === g.val ? 'bg-emerald-600 text-white border-emerald-600 shadow-md' : 'border-slate-200 text-slate-500 hover:bg-slate-50'}`}>
                       {g.label}
                     </button>
                   ))}
@@ -179,12 +180,12 @@ const OnboardingScreen = ({ onComplete }) => {
 
           <div className="mt-10 flex gap-3">
             {step > 1 && (
-              <button onClick={() => setStep(step - 1)} className="flex-1 p-4 rounded-2xl border border-slate-200 font-bold text-slate-600 hover:bg-slate-50">返回</button>
+              <button onClick={() => setStep(step - 1)} className="flex-1 py-4 rounded-2xl border border-slate-200 font-bold text-slate-600 hover:bg-slate-50">返回</button>
             )}
             {step < 3 ? (
-              <button onClick={() => setStep(step + 1)} className="flex-[2] p-4 rounded-2xl bg-emerald-600 text-white font-bold shadow-lg shadow-emerald-200 hover:bg-emerald-700 flex items-center justify-center gap-2">下一步 <ChevronRight className="w-5 h-5" /></button>
+              <button onClick={() => setStep(step + 1)} className="flex-[2] py-4 rounded-2xl bg-emerald-600 text-white font-bold shadow-lg shadow-emerald-200 hover:bg-emerald-700 flex items-center justify-center gap-2">下一步 <ChevronRight className="w-5 h-5" /></button>
             ) : (
-              <button onClick={handleStart} className="flex-[2] p-4 rounded-2xl bg-emerald-600 text-white font-bold shadow-lg shadow-emerald-200 hover:bg-emerald-700 flex items-center justify-center gap-2">開始健康選食！ <Save className="w-5 h-5" /></button>
+              <button onClick={handleStart} className="flex-[2] py-4 rounded-2xl bg-emerald-600 text-white font-bold shadow-lg shadow-emerald-200 hover:bg-emerald-700 flex items-center justify-center gap-2">開始健康選食！ <Save className="w-5 h-5" /></button>
             )}
           </div>
         </div>
@@ -203,21 +204,21 @@ const MainApp = ({ onResetProfile }) => {
   
   // 選食狀態
   const [selectedMain, setSelectedMain] = useState(null);
-  const [mainPortion, setMainPortion] = useState(1); // 新增：主餐份量乘數
+  const [mainPortion, setMainPortion] = useState(1);
   const [addedSides, setAddedSides] = useState([]);
   
   const [customMeals, setCustomMeals] = useState([]);
-  const [customSides, setCustomSides] = useState([]); // 新增：自訂配菜的記憶陣列
+  const [customSides, setCustomSides] = useState([]);
   const [recentMeals, setRecentMeals] = useState([]);
   const [expandedCategories, setExpandedCategories] = useState({});
   const [history, setHistory] = useState([]);
   const [showHistory, setShowHistory] = useState(false);
   
-  // 手動輸入狀態 (支援 'main' 主餐模式)
+  // 手動輸入狀態
   const [customInputMode, setCustomInputMode] = useState(null); 
   const [customMeal, setCustomMeal] = useState({ name: '', cal: '', pro: '', fib: '', sod: '', carb: '', price: '' });
 
-  // 新增：快速行內自訂輸入狀態 (支援不限數量)
+  // 快速行內自訂輸入狀態
   const [inlineCustom, setInlineCustom] = useState({ name: '', cal: '', pro: '', fib: '', sod: '', carb: '', price: '' });
 
   // 載入資料與計算動態目標
@@ -255,7 +256,6 @@ const MainApp = ({ onResetProfile }) => {
     const savedCustoms = localStorage.getItem('custom_meals');
     if (savedCustoms) setCustomMeals(JSON.parse(savedCustoms));
     
-    // 載入自訂配菜記憶
     const savedCustomSides = localStorage.getItem('custom_sides');
     if (savedCustomSides) setCustomSides(JSON.parse(savedCustomSides));
     
@@ -265,7 +265,6 @@ const MainApp = ({ onResetProfile }) => {
     if (savedHistory) setHistory(JSON.parse(savedHistory));
   }, []);
 
-  // --- 計算當前總和 (加入主餐份量乘數) ---
   const adjustedMain = selectedMain ? {
     ...selectedMain,
     cal: selectedMain.cal * mainPortion,
@@ -285,7 +284,6 @@ const MainApp = ({ onResetProfile }) => {
     price: (adjustedMain?.price || 0) + addedSides.reduce((sum, item) => sum + item.price, 0),
   };
 
-  // 購物車側邊欄分組計算 (例如: 茶葉蛋 x2)
   const groupedSides = addedSides.reduce((acc, side) => {
     const existing = acc.find(s => s.id === side.id);
     if (existing) { existing.count += 1; } 
@@ -301,7 +299,6 @@ const MainApp = ({ onResetProfile }) => {
 
   const addSide = (side) => setAddedSides([...addedSides, side]);
   
-  // 移除商品 (移除陣列中最後一個相符的項目，模擬取消最後一次加購)
   const removeSideById = (id) => {
     const index = addedSides.map(s => s.id).lastIndexOf(id);
     if (index !== -1) {
@@ -324,7 +321,7 @@ const MainApp = ({ onResetProfile }) => {
 
   const handleSelectMain = (meal) => {
     setSelectedMain(meal);
-    setMainPortion(1); // 重新選擇主餐時重設份量
+    setMainPortion(1);
     const newRecents = [meal, ...recentMeals.filter(m => m.id !== meal.id)].slice(0, 3);
     setRecentMeals(newRecents);
     localStorage.setItem('recent_meals', JSON.stringify(newRecents));
@@ -344,7 +341,6 @@ const MainApp = ({ onResetProfile }) => {
       expert: isMain ? '💡 這是您自訂的主餐。系統已套用個人專屬公式分析！' : ''
     };
     
-    // 只將主餐存入自訂列表 (避免列表太亂)
     if (isMain) {
       const updatedCustoms = [newMeal, ...customMeals];
       setCustomMeals(updatedCustoms);
@@ -352,7 +348,6 @@ const MainApp = ({ onResetProfile }) => {
       handleSelectMain(newMeal);
     } else {
       addSide(newMeal);
-      // 新增：儲存自訂配菜，保留最新 10 筆
       const updatedCustomSides = [newMeal, ...customSides.filter(s => s.name !== newMeal.name)].slice(0, 10);
       setCustomSides(updatedCustomSides);
       localStorage.setItem('custom_sides', JSON.stringify(updatedCustomSides));
@@ -362,7 +357,6 @@ const MainApp = ({ onResetProfile }) => {
     setCustomMeal({name: '', cal: '', pro: '', fib: '', sod: '', carb: '', price: ''});
   };
 
-  // 新增：處理行內無限次數加購
   const handleInlineCustomAdd = () => {
     if (!inlineCustom.name || !inlineCustom.cal) {
       alert('請至少填寫「食物名稱」與「熱量」喔！');
@@ -381,12 +375,10 @@ const MainApp = ({ onResetProfile }) => {
     };
     addSide(newItem);
     
-    // 新增：儲存行內自訂配菜，保留最新 10 筆
     const updatedCustomSides = [newItem, ...customSides.filter(s => s.name !== newItem.name)].slice(0, 10);
     setCustomSides(updatedCustomSides);
     localStorage.setItem('custom_sides', JSON.stringify(updatedCustomSides));
 
-    // 清空表單，方便學員連續輸入下一個
     setInlineCustom({ name: '', cal: '', pro: '', fib: '', sod: '', carb: '', price: '' });
   };
 
@@ -406,7 +398,7 @@ const MainApp = ({ onResetProfile }) => {
   const renderMealItem = (meal) => {
     const light = getLight(meal);
     return (
-      <div key={meal.id} onClick={() => handleSelectMain(meal)} className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between cursor-pointer active:scale-[0.98] transition-all hover:border-emerald-200">
+      <div key={meal.id} onClick={() => handleSelectMain(meal)} className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between cursor-pointer active:scale-[0.98] active:bg-slate-50 transition-all hover:border-emerald-200">
         <div className="flex-1 min-w-0 pr-3">
           <div className="flex items-center gap-2 mb-1">
             <span className={`flex-shrink-0 w-3 h-3 rounded-full ${light.color} shadow-sm`}></span>
@@ -424,14 +416,14 @@ const MainApp = ({ onResetProfile }) => {
   };
 
   // ====================
-  // 畫面 1.5：手動輸入 (支援主餐/配菜)
+  // 畫面 1.5：手動輸入 (主餐/配菜)
   // ====================
   if (customInputMode) {
     const isMain = customInputMode === 'main';
     return (
       <div className="min-h-screen bg-slate-50 flex flex-col items-center p-4 font-sans text-slate-800 pb-20">
         <div className="w-full max-w-md">
-          <button onClick={() => setCustomInputMode(null)} className="flex items-center text-slate-500 font-medium py-2 mb-2"><ChevronLeft className="w-5 h-5" /> 返回</button>
+          <button onClick={() => setCustomInputMode(null)} className="flex items-center text-slate-500 font-medium py-3 mb-2"><ChevronLeft className="w-5 h-5" /> 返回</button>
           <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
             <div className="flex items-center gap-3 mb-6">
               <div className="bg-emerald-100 p-3 rounded-full text-emerald-600"><Edit className="w-6 h-6" /></div>
@@ -441,16 +433,16 @@ const MainApp = ({ onResetProfile }) => {
               </div>
             </div>
             <form onSubmit={handleCustomSubmit} className="space-y-4">
-              <div><label className="block text-sm font-semibold text-slate-600 mb-1">商品名稱 (必填)</label><input type="text" required className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none" value={customMeal.name} onChange={e => setCustomMeal({...customMeal, name: e.target.value})} /></div>
+              <div><label className="block text-sm font-semibold text-slate-600 mb-1">商品名稱 (必填)</label><input type="text" required className="w-full text-base p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none" value={customMeal.name} onChange={e => setCustomMeal({...customMeal, name: e.target.value})} /></div>
               <div className="grid grid-cols-2 gap-4">
-                <div><label className="block text-sm font-semibold text-slate-600 mb-1">熱量 (大卡)</label><input type="number" required min="0" className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" value={customMeal.cal} onChange={e => setCustomMeal({...customMeal, cal: e.target.value})} /></div>
-                <div><label className="block text-sm font-semibold text-orange-600 mb-1">碳水/糖 (g)</label><input type="number" step="0.1" required min="0" className="w-full p-3 bg-orange-50 border border-orange-200 rounded-xl outline-none" value={customMeal.carb} onChange={e => setCustomMeal({...customMeal, carb: e.target.value})} /></div>
-                <div><label className="block text-sm font-semibold text-blue-600 mb-1">蛋白質 (g)</label><input type="number" step="0.1" required min="0" className="w-full p-3 bg-blue-50 border border-blue-200 rounded-xl outline-none" value={customMeal.pro} onChange={e => setCustomMeal({...customMeal, pro: e.target.value})} /></div>
-                <div><label className="block text-sm font-semibold text-emerald-600 mb-1">膳食纖維 (g)</label><input type="number" step="0.1" min="0" className="w-full p-3 bg-emerald-50 border border-emerald-200 rounded-xl outline-none" value={customMeal.fib} onChange={e => setCustomMeal({...customMeal, fib: e.target.value})} /></div>
-                <div className="col-span-2"><label className="block text-sm font-semibold text-red-600 mb-1 flex items-center gap-1">鈉含量 (mg) <Info className="w-3 h-3"/></label><input type="number" required min="0" className="w-full p-3 bg-red-50 border border-red-200 rounded-xl outline-none" value={customMeal.sod} onChange={e => setCustomMeal({...customMeal, sod: e.target.value})} /></div>
-                <div className="col-span-2"><label className="block text-sm font-semibold text-slate-600 mb-1">價格 (元)</label><input type="number" min="0" className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" value={customMeal.price} onChange={e => setCustomMeal({...customMeal, price: e.target.value})} /></div>
+                <div><label className="block text-sm font-semibold text-slate-600 mb-1">熱量 (大卡)</label><input type="number" required min="0" className="w-full text-base p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" value={customMeal.cal} onChange={e => setCustomMeal({...customMeal, cal: e.target.value})} /></div>
+                <div><label className="block text-sm font-semibold text-orange-600 mb-1">碳水/糖 (g)</label><input type="number" step="0.1" required min="0" className="w-full text-base p-3 bg-orange-50 border border-orange-200 rounded-xl outline-none" value={customMeal.carb} onChange={e => setCustomMeal({...customMeal, carb: e.target.value})} /></div>
+                <div><label className="block text-sm font-semibold text-blue-600 mb-1">蛋白質 (g)</label><input type="number" step="0.1" required min="0" className="w-full text-base p-3 bg-blue-50 border border-blue-200 rounded-xl outline-none" value={customMeal.pro} onChange={e => setCustomMeal({...customMeal, pro: e.target.value})} /></div>
+                <div><label className="block text-sm font-semibold text-emerald-600 mb-1">膳食纖維 (g)</label><input type="number" step="0.1" min="0" className="w-full text-base p-3 bg-emerald-50 border border-emerald-200 rounded-xl outline-none" value={customMeal.fib} onChange={e => setCustomMeal({...customMeal, fib: e.target.value})} /></div>
+                <div className="col-span-2"><label className="block text-sm font-semibold text-red-600 mb-1 flex items-center gap-1">鈉含量 (mg) <Info className="w-3 h-3"/></label><input type="number" required min="0" className="w-full text-base p-3 bg-red-50 border border-red-200 rounded-xl outline-none" value={customMeal.sod} onChange={e => setCustomMeal({...customMeal, sod: e.target.value})} /></div>
+                <div className="col-span-2"><label className="block text-sm font-semibold text-slate-600 mb-1">價格 (元)</label><input type="number" min="0" className="w-full text-base p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" value={customMeal.price} onChange={e => setCustomMeal({...customMeal, price: e.target.value})} /></div>
               </div>
-              <button type="submit" className="w-full mt-6 bg-emerald-600 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-emerald-700">{isMain ? '儲存並開始分析' : '加入本餐清單'}</button>
+              <button type="submit" className="w-full mt-6 bg-emerald-600 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-emerald-700 active:scale-[0.98]">{isMain ? '儲存並開始分析' : '加入本餐清單'}</button>
             </form>
           </div>
         </div>
@@ -487,8 +479,8 @@ const MainApp = ({ onResetProfile }) => {
     return (
       <div className="min-h-screen bg-slate-50 flex flex-col items-center p-4 font-sans text-slate-800 pb-20">
         <div className="w-full max-w-md">
-          <button onClick={() => setShowHistory(false)} className="flex items-center text-slate-500 font-medium py-2 mb-2"><ChevronLeft className="w-5 h-5" /> 返回首頁</button>
-          <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 mb-6 relative overflow-hidden">
+          <button onClick={() => setShowHistory(false)} className="flex items-center text-slate-500 font-medium py-3 mb-2"><ChevronLeft className="w-5 h-5" /> 返回首頁</button>
+          <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 mb-6 relative overflow-hidden">
             <div className={`absolute top-0 right-0 w-24 h-24 rounded-bl-[100px] ${grade.bg} -z-0 opacity-50`}></div>
             <h2 className="text-lg font-bold flex items-center gap-2 mb-4 relative z-10"><Award className={`w-6 h-6 ${grade.color}`} /> 本週選食成績單</h2>
             <div className="flex items-end gap-4 mb-5 relative z-10">
@@ -535,7 +527,7 @@ const MainApp = ({ onResetProfile }) => {
     }, {});
 
     return (
-      <div className="min-h-screen bg-slate-50 flex flex-col items-center p-4 font-sans text-slate-800 pb-20">
+      <div className="min-h-screen bg-slate-50 flex flex-col items-center p-4 font-sans text-slate-800 pb-24">
         <div className="w-full max-w-md">
           <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 mb-4 relative overflow-hidden">
             <button onClick={onResetProfile} className="absolute top-5 right-5 text-slate-400 hover:text-emerald-600 transition-colors p-2 bg-slate-50 rounded-full" title="重新設定個人資料">
@@ -546,24 +538,24 @@ const MainApp = ({ onResetProfile }) => {
             
             <div className="mt-5 relative mb-3">
               <Search className="w-5 h-5 absolute left-3 top-3 text-slate-400" />
-              <input type="text" placeholder="搜尋 7-11 主食 (如：便當, 義大利麵)" className="w-full bg-slate-100 rounded-xl py-3 pl-10 pr-4 outline-none focus:ring-2 focus:ring-emerald-500" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+              {/* 輸入框設定為 text-base 防 iOS 放大 */}
+              <input type="text" placeholder="搜尋 7-11 主食 (如：便當, 義大利麵)" className="w-full text-base bg-slate-100 rounded-xl py-3 pl-10 pr-4 outline-none focus:ring-2 focus:ring-emerald-500" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
             </div>
-            <button onClick={() => setCustomInputMode('main')} className="w-full bg-emerald-50 border border-emerald-200 text-emerald-700 py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-emerald-100 font-bold text-sm">
+            <button onClick={() => setCustomInputMode('main')} className="w-full bg-emerald-50 border border-emerald-200 text-emerald-700 py-3.5 rounded-xl flex items-center justify-center gap-2 hover:bg-emerald-100 active:bg-emerald-200 font-bold text-sm transition-colors">
               <Edit className="w-4 h-4" /> 找不到商品？自己輸入主餐標示
             </button>
             
-            {/* 新增：空白餐盤選項 */}
             <button 
               onClick={() => handleSelectMain({
                 id: 'blank_' + Date.now(), name: '🍽️ 空白餐盤 (無主餐)', category: '自訂主餐',
                 cal: 0, pro: 0, fib: 0, sod: 0, carb: 0, price: 0, expert: '此為空白基底，請在下方的「自行輸入區」隨意加入您買的各種食物！'
               })} 
-              className="w-full mt-3 bg-blue-50 border border-blue-200 text-blue-700 py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-blue-100 font-bold text-sm shadow-sm"
+              className="w-full mt-3 bg-blue-50 border border-blue-200 text-blue-700 py-3.5 rounded-xl flex items-center justify-center gap-2 hover:bg-blue-100 active:bg-blue-200 font-bold text-sm shadow-sm transition-colors"
             >
               <Plus className="w-4 h-4" /> 只買小東西？從空白餐盤開始組合
             </button>
             
-            <button onClick={() => setShowHistory(true)} className="w-full mt-3 bg-slate-800 text-white py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-slate-700 font-bold text-sm shadow-md">
+            <button onClick={() => setShowHistory(true)} className="w-full mt-3 bg-slate-800 text-white py-3.5 rounded-xl flex items-center justify-center gap-2 hover:bg-slate-700 active:bg-slate-900 font-bold text-sm shadow-md transition-colors">
               <TrendingUp className="w-4 h-4" /> 查看本週健康成績單
             </button>
           </div>
@@ -582,7 +574,7 @@ const MainApp = ({ onResetProfile }) => {
                 const isExpanded = searchTerm !== '' || expandedCategories[category];
                 return (
                   <div key={category} className="bg-slate-100/50 rounded-2xl overflow-hidden border border-slate-200/60">
-                    <button onClick={() => toggleCategory(category)} className="w-full px-4 py-3 flex items-center justify-between bg-white text-slate-700 font-bold">
+                    <button onClick={() => toggleCategory(category)} className="w-full px-4 py-4 flex items-center justify-between bg-white text-slate-700 font-bold active:bg-slate-50">
                       <div className="flex items-center gap-2"><span>{category}</span><span className="bg-slate-100 text-slate-500 text-[10px] px-2 py-0.5 rounded-full">{groupedMains[category].length}</span></div>
                       {isExpanded ? <ChevronUp className="w-4 h-4 text-slate-400"/> : <ChevronDown className="w-4 h-4 text-slate-400"/>}
                     </button>
@@ -599,7 +591,7 @@ const MainApp = ({ onResetProfile }) => {
   }
 
   // ====================
-  // 畫面 2：診斷與加購 (支援份量調整)
+  // 畫面 2：診斷與加購
   // ====================
   const mainLight = getLight(adjustedMain);
   const needProtein = totals.pro < macroTargets.proMin;
@@ -610,9 +602,10 @@ const MainApp = ({ onResetProfile }) => {
   const isPerfect211 = !needProtein && !excessProtein && !needFiber && !excessCarb;
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col items-center p-4 font-sans text-slate-800 pb-56">
+    // 加大底部 pb 確保不被結帳列遮擋
+    <div className="min-h-screen bg-slate-50 flex flex-col items-center p-4 font-sans text-slate-800 pb-[280px]">
       <div className="w-full max-w-md space-y-4">
-        <button onClick={resetSelection} className="flex items-center text-slate-500 font-medium py-2"><ChevronLeft className="w-5 h-5" /> 重新選擇主食</button>
+        <button onClick={resetSelection} className="flex items-center text-slate-500 font-medium py-3"><ChevronLeft className="w-5 h-5" /> 重新選擇主食</button>
 
         <div className="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 relative overflow-hidden">
           <div className={`absolute top-0 left-0 w-2 h-full ${mainLight.color}`}></div>
@@ -622,13 +615,12 @@ const MainApp = ({ onResetProfile }) => {
               <span className={`flex-shrink-0 ml-2 text-xs px-2 py-1 rounded-md text-white font-bold ${mainLight.color}`}>{mainLight.label}</span>
             </div>
             
-            {/* 動態份量調整控制器 */}
-            <div className="mt-3 mb-2 flex items-center gap-3 bg-slate-50 p-2 rounded-xl border border-slate-200 w-max">
+            <div className="mt-3 mb-2 flex items-center gap-3 bg-slate-50 p-2.5 rounded-xl border border-slate-200 w-max">
               <span className="text-xs font-bold text-slate-500 ml-1">食用份量</span>
               <div className="flex items-center">
-                <button onClick={() => setMainPortion(Math.max(0.5, mainPortion - 0.5))} className="w-7 h-7 flex items-center justify-center bg-white rounded-md shadow-sm text-slate-600 hover:bg-slate-100 font-bold">-</button>
-                <span className="text-sm font-black text-slate-700 w-12 text-center">{mainPortion} 份</span>
-                <button onClick={() => setMainPortion(mainPortion + 0.5)} className="w-7 h-7 flex items-center justify-center bg-white rounded-md shadow-sm text-slate-600 hover:bg-slate-100 font-bold">+</button>
+                <button onClick={() => setMainPortion(Math.max(0.5, mainPortion - 0.5))} className="w-8 h-8 flex items-center justify-center bg-white rounded-md shadow-sm text-slate-600 hover:bg-slate-100 active:bg-slate-200 font-bold text-lg">-</button>
+                <span className="text-sm font-black text-slate-700 w-14 text-center">{mainPortion} 份</span>
+                <button onClick={() => setMainPortion(mainPortion + 0.5)} className="w-8 h-8 flex items-center justify-center bg-white rounded-md shadow-sm text-slate-600 hover:bg-slate-100 active:bg-slate-200 font-bold text-lg">+</button>
               </div>
             </div>
 
@@ -647,32 +639,28 @@ const MainApp = ({ onResetProfile }) => {
                 <div className={`transition-all duration-500 ${excessCarb ? 'bg-red-400' : 'bg-orange-300'}`} style={{ width: `${Math.min((adjustedMain.carb/macroTargets.carbMax)*100, 100)}%` }}></div>
                 {addedSides.map((s, i) => s.carb > 0 && <div key={i} className={`border-l border-white/30 transition-all duration-500 ${excessCarb ? 'bg-red-500' : 'bg-orange-400'}`} style={{ width: `${(s.carb/macroTargets.carbMax)*100}%` }}></div>)}
               </div>
-              {excessCarb && <p className="text-[10px] text-red-500 mt-1 flex items-center gap-1"><AlertTriangle className="w-3 h-3"/> 澱粉超標！破壞211比例，建議調整主餐食用份量。</p>}
+              {excessCarb && <p className="text-[10px] text-red-500 mt-1.5 flex items-center gap-1"><AlertTriangle className="w-3 h-3"/> 澱粉超標！破壞211比例，建議調整主餐食用份量。</p>}
             </div>
             <div>
               <div className="flex justify-between text-xs mb-1"><span className="font-semibold text-blue-700">🥩 蛋白質 (個人目標 {macroTargets.proMin}-{macroTargets.proMax}g)</span><span className={excessProtein ? 'text-red-500 font-bold' : (!needProtein ? 'text-emerald-500 font-bold' : 'text-slate-500')}>{totals.pro.toFixed(1)}g</span></div>
               <div className="h-3 bg-slate-100 rounded-full overflow-hidden flex">
                 <div className={`transition-all duration-500 ${excessProtein ? 'bg-red-400' : 'bg-blue-300'}`} style={{ width: `${Math.min((adjustedMain.pro/macroTargets.proMax)*100, 100)}%` }}></div>
-                {/* 修正：改成認數字 s.pro > 0，不綁死分類 */}
                 {addedSides.map((s, i) => s.pro > 0 && <div key={i} className={`border-l border-white/30 transition-all duration-500 ${excessProtein ? 'bg-red-500' : 'bg-blue-500'}`} style={{ width: `${(s.pro/macroTargets.proMax)*100}%` }}></div>)}
               </div>
-              {excessProtein && <p className="text-[10px] text-red-500 mt-1 flex items-center gap-1"><AlertTriangle className="w-3 h-3"/> 蛋白質已達單餐吸收上限，多吃無益易轉化為負擔。</p>}
+              {excessProtein && <p className="text-[10px] text-red-500 mt-1.5 flex items-center gap-1"><AlertTriangle className="w-3 h-3"/> 蛋白質已達單餐吸收上限，多吃無益易轉化為負擔。</p>}
             </div>
             <div>
               <div className="flex justify-between text-xs mb-1"><span className="font-semibold text-emerald-700">🥗 膳食纖維 (目標至少 {macroTargets.fibMin}g)</span><span className={!needFiber ? 'text-emerald-500 font-bold' : 'text-slate-500'}>{totals.fib.toFixed(1)}g</span></div>
               <div className="h-3 bg-slate-100 rounded-full overflow-hidden flex">
                 <div className="bg-emerald-300 transition-all duration-500" style={{ width: `${Math.min((adjustedMain.fib/macroTargets.fibMin)*100, 100)}%` }}></div>
-                {/* 修正：改成認數字 s.fib > 0，不綁死分類 */}
                 {addedSides.map((s, i) => s.fib > 0 && <div key={i} className="bg-emerald-500 border-l border-white/30 transition-all duration-500" style={{ width: `${(s.fib/macroTargets.fibMin)*100}%` }}></div>)}
               </div>
             </div>
-            {sodWarning && <div className="flex items-center gap-2 text-xs text-red-600 bg-red-50 p-2 rounded-lg mt-2"><AlertCircle className="w-4 h-4" /> 總鈉量達 {totals.sod}mg，請多喝水幫助代謝！</div>}
+            {sodWarning && <div className="flex items-center gap-2 text-xs text-red-600 bg-red-50 p-2.5 rounded-xl mt-3"><AlertCircle className="w-4 h-4" /> 總鈉量達 {totals.sod}mg，請多喝水幫助代謝！</div>}
           </div>
         </div>
 
-        {/* 系統智慧加購區 (改為常駐顯示) */}
         <div className="space-y-4">
-          {/* 蛋白質加購區：未達標藍色，達標灰色 */}
           <div className={`p-4 rounded-3xl border transition-colors ${needProtein && !excessProtein ? 'bg-blue-50/50 border-blue-100' : 'bg-slate-50 border-slate-200'}`}>
             <h3 className={`text-sm font-bold mb-3 flex items-center gap-1 ${needProtein && !excessProtein ? 'text-blue-800' : 'text-slate-600'}`}>
               💪 {needProtein && !excessProtein ? '建議補足蛋白質' : '蛋白質單點區 (已達標)'}
@@ -681,13 +669,12 @@ const MainApp = ({ onResetProfile }) => {
               {SIDE_OPTIONS.filter(s => s.type === 'protein').map(side => (
                 <div key={side.id} className={`snap-start flex-shrink-0 w-36 bg-white border rounded-2xl p-3 flex flex-col justify-between shadow-sm ${needProtein && !excessProtein ? 'border-blue-100' : 'border-slate-200'}`}>
                   <div><div className="text-xs font-bold text-slate-700 mb-1">{side.name}</div><div className={`text-[10px] font-medium ${needProtein && !excessProtein ? 'text-blue-500' : 'text-slate-400'}`}>+{side.pro}g 蛋白</div></div>
-                  <button onClick={() => addSide(side)} className={`mt-3 w-full py-1.5 text-xs font-bold rounded-lg flex justify-center items-center gap-1 ${needProtein && !excessProtein ? 'bg-blue-50 text-blue-600 hover:bg-blue-100' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}><Plus className="w-3 h-3" /> 加點</button>
+                  <button onClick={() => addSide(side)} className={`mt-3 w-full py-2 text-xs font-bold rounded-xl flex justify-center items-center gap-1 active:scale-[0.98] transition-all ${needProtein && !excessProtein ? 'bg-blue-50 text-blue-600 hover:bg-blue-100' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}><Plus className="w-3 h-3" /> 加點</button>
                 </div>
               ))}
             </div>
           </div>
           
-          {/* 膳食纖維加購區：未達標綠色，達標灰色 */}
           <div className={`p-4 rounded-3xl border transition-colors ${needFiber ? 'bg-emerald-50/50 border-emerald-100' : 'bg-slate-50 border-slate-200'}`}>
             <h3 className={`text-sm font-bold mb-3 flex items-center gap-1 ${needFiber ? 'text-emerald-800' : 'text-slate-600'}`}>
               🥗 {needFiber ? '建議補足膳食纖維' : '膳食纖維單點區 (已達標)'}
@@ -696,13 +683,12 @@ const MainApp = ({ onResetProfile }) => {
               {SIDE_OPTIONS.filter(s => s.type === 'fiber').map(side => (
                 <div key={side.id} className={`snap-start flex-shrink-0 w-36 bg-white border rounded-2xl p-3 flex flex-col justify-between shadow-sm ${needFiber ? 'border-emerald-100' : 'border-slate-200'}`}>
                   <div><div className="text-xs font-bold text-slate-700 mb-1">{side.name}</div><div className={`text-[10px] font-medium ${needFiber ? 'text-emerald-500' : 'text-slate-400'}`}>+{side.fib}g 纖維</div></div>
-                  <button onClick={() => addSide(side)} className={`mt-3 w-full py-1.5 text-xs font-bold rounded-lg flex justify-center items-center gap-1 ${needFiber ? 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}><Plus className="w-3 h-3" /> 加點</button>
+                  <button onClick={() => addSide(side)} className={`mt-3 w-full py-2 text-xs font-bold rounded-xl flex justify-center items-center gap-1 active:scale-[0.98] transition-all ${needFiber ? 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}><Plus className="w-3 h-3" /> 加點</button>
                 </div>
               ))}
             </div>
           </div>
           
-          {/* 其他點心/飲品加購區 */}
           <div className="bg-slate-100/50 p-4 rounded-3xl border border-slate-200/60">
             <h3 className="text-sm font-bold text-slate-700 mb-3 flex items-center gap-1"><Coffee className="w-4 h-4"/> 其他單點 (飲品/水果/點心)</h3>
             <div className="flex overflow-x-auto pb-2 gap-3 snap-x">
@@ -712,24 +698,22 @@ const MainApp = ({ onResetProfile }) => {
                     <div className="text-xs font-bold text-slate-700 mb-1 leading-tight">{side.name}</div>
                     <div className="text-[10px] text-orange-500 font-medium">{side.carb > 0 ? `+${side.carb}g 碳水` : `${side.cal} kcal`}</div>
                   </div>
-                  <button onClick={() => addSide(side)} className="mt-3 w-full py-1.5 bg-slate-50 text-slate-600 text-xs font-bold rounded-lg hover:bg-slate-100 flex justify-center items-center gap-1"><Plus className="w-3 h-3" /> 加點</button>
+                  <button onClick={() => addSide(side)} className="mt-3 w-full py-2 bg-slate-50 text-slate-600 text-xs font-bold rounded-xl hover:bg-slate-100 active:scale-[0.98] flex justify-center items-center gap-1 transition-all"><Plus className="w-3 h-3" /> 加點</button>
                 </div>
               ))}
             </div>
           </div>
           
-          {/* 新增：快速自行輸入欄位 (無限新增區) */}
           <div className="bg-purple-50/50 p-4 rounded-3xl border border-purple-100 mt-2">
             <h3 className="text-sm font-bold text-purple-800 mb-2 flex items-center gap-1"><Edit className="w-4 h-4"/> 自行輸入其他食物 (不限數量)</h3>
             <p className="text-[10px] text-purple-600 mb-3 leading-tight">不確定分類或買了清單外的小東西？直接輸入標示，按加入即可無限疊加。</p>
             
-            {/* 新增：常吃自訂清單記憶區 */}
             {customSides.length > 0 && (
               <div className="mb-3">
                 <p className="text-[10px] font-bold text-purple-700 mb-1">您常吃的自訂紀錄 (點擊快速加入)：</p>
                 <div className="flex overflow-x-auto pb-1 gap-2 snap-x">
                   {customSides.map(side => (
-                    <span key={side.id} onClick={() => addSide(side)} className="snap-start flex-shrink-0 bg-white border border-purple-200 text-purple-700 text-xs px-2.5 py-1.5 rounded-lg shadow-sm cursor-pointer hover:bg-purple-100 flex items-center gap-1 transition-colors">
+                    <span key={side.id} onClick={() => addSide(side)} className="snap-start flex-shrink-0 bg-white border border-purple-200 text-purple-700 text-xs px-3 py-2 rounded-xl shadow-sm cursor-pointer hover:bg-purple-100 active:scale-[0.98] flex items-center gap-1 transition-all">
                       <Plus className="w-3 h-3" /> {side.name}
                     </span>
                   ))}
@@ -738,31 +722,32 @@ const MainApp = ({ onResetProfile }) => {
             )}
 
             <div className="space-y-2">
-              <input type="text" placeholder="食物名稱 (必填)" className="w-full text-sm p-2.5 bg-white border border-purple-200 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none" value={inlineCustom.name} onChange={e => setInlineCustom({...inlineCustom, name: e.target.value})} />
+              <input type="text" placeholder="食物名稱 (必填)" className="w-full text-base p-3 bg-white border border-purple-200 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none" value={inlineCustom.name} onChange={e => setInlineCustom({...inlineCustom, name: e.target.value})} />
               <div className="grid grid-cols-3 gap-2">
-                <input type="number" placeholder="熱量(kcal)" className="w-full text-sm p-2 bg-white border border-purple-200 rounded-xl outline-none text-center placeholder:text-xs" value={inlineCustom.cal} onChange={e => setInlineCustom({...inlineCustom, cal: e.target.value})} />
-                <input type="number" placeholder="碳水(g)" className="w-full text-sm p-2 bg-white border border-purple-200 rounded-xl outline-none text-center placeholder:text-xs" value={inlineCustom.carb} onChange={e => setInlineCustom({...inlineCustom, carb: e.target.value})} />
-                <input type="number" placeholder="蛋白質(g)" className="w-full text-sm p-2 bg-white border border-purple-200 rounded-xl outline-none text-center placeholder:text-xs" value={inlineCustom.pro} onChange={e => setInlineCustom({...inlineCustom, pro: e.target.value})} />
-                <input type="number" placeholder="纖維(g)" className="w-full text-sm p-2 bg-white border border-purple-200 rounded-xl outline-none text-center placeholder:text-xs" value={inlineCustom.fib} onChange={e => setInlineCustom({...inlineCustom, fib: e.target.value})} />
-                <input type="number" placeholder="鈉(mg)" className="w-full text-sm p-2 bg-white border border-purple-200 rounded-xl outline-none text-center placeholder:text-xs" value={inlineCustom.sod} onChange={e => setInlineCustom({...inlineCustom, sod: e.target.value})} />
-                <input type="number" placeholder="價格($)" className="w-full text-sm p-2 bg-white border border-purple-200 rounded-xl outline-none text-center placeholder:text-xs" value={inlineCustom.price} onChange={e => setInlineCustom({...inlineCustom, price: e.target.value})} />
+                <input type="number" placeholder="熱量(kcal)" className="w-full text-base p-2.5 bg-white border border-purple-200 rounded-xl outline-none text-center placeholder:text-xs" value={inlineCustom.cal} onChange={e => setInlineCustom({...inlineCustom, cal: e.target.value})} />
+                <input type="number" placeholder="碳水(g)" className="w-full text-base p-2.5 bg-white border border-purple-200 rounded-xl outline-none text-center placeholder:text-xs" value={inlineCustom.carb} onChange={e => setInlineCustom({...inlineCustom, carb: e.target.value})} />
+                <input type="number" placeholder="蛋白質(g)" className="w-full text-base p-2.5 bg-white border border-purple-200 rounded-xl outline-none text-center placeholder:text-xs" value={inlineCustom.pro} onChange={e => setInlineCustom({...inlineCustom, pro: e.target.value})} />
+                <input type="number" placeholder="纖維(g)" className="w-full text-base p-2.5 bg-white border border-purple-200 rounded-xl outline-none text-center placeholder:text-xs" value={inlineCustom.fib} onChange={e => setInlineCustom({...inlineCustom, fib: e.target.value})} />
+                <input type="number" placeholder="鈉(mg)" className="w-full text-base p-2.5 bg-white border border-purple-200 rounded-xl outline-none text-center placeholder:text-xs" value={inlineCustom.sod} onChange={e => setInlineCustom({...inlineCustom, sod: e.target.value})} />
+                <input type="number" placeholder="價格($)" className="w-full text-base p-2.5 bg-white border border-purple-200 rounded-xl outline-none text-center placeholder:text-xs" value={inlineCustom.price} onChange={e => setInlineCustom({...inlineCustom, price: e.target.value})} />
               </div>
-              <button onClick={handleInlineCustomAdd} className="w-full mt-2 py-2.5 bg-purple-600 text-white text-sm font-bold rounded-xl hover:bg-purple-700 active:scale-[0.98] flex justify-center items-center gap-1 shadow-sm transition-all"><Plus className="w-4 h-4" /> 新增至本餐清單</button>
+              <button onClick={handleInlineCustomAdd} className="w-full mt-2 py-3 bg-purple-600 text-white text-sm font-bold rounded-xl hover:bg-purple-700 active:scale-[0.98] flex justify-center items-center gap-1 shadow-sm transition-all"><Plus className="w-4 h-4" /> 新增至本餐清單</button>
             </div>
           </div>
 
         </div>
       </div>
 
-      <div className="fixed bottom-0 left-0 w-full bg-white border-t border-slate-200 p-4 pb-safe shadow-[0_-10px_30px_rgba(0,0,0,0.08)] z-10">
+      {/* 加入手機底部安全距離 (safe-area-inset-bottom) 防止 iPhone 橫條遮擋 */}
+      <div className="fixed bottom-0 left-0 w-full bg-white border-t border-slate-200 p-4 shadow-[0_-10px_30px_rgba(0,0,0,0.08)] z-10" style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom))' }}>
         <div className="max-w-md mx-auto">
           {groupedSides.length > 0 && (
             <div className="flex gap-2 overflow-x-auto mb-3 pb-1">
               {groupedSides.map((side, i) => (
-                <span key={i} className="bg-slate-100 text-xs px-2.5 py-1.5 rounded-lg flex items-center gap-1.5 whitespace-nowrap shadow-sm border border-slate-200/50">
+                <span key={i} className="bg-slate-100 text-xs px-3 py-2 rounded-xl flex items-center gap-1.5 whitespace-nowrap shadow-sm border border-slate-200/50">
                   <span className="font-medium text-slate-700">{side.name}</span>
-                  {side.count > 1 && <span className="text-emerald-600 font-bold bg-emerald-100 px-1.5 rounded-md">x{side.count}</span>}
-                  <X className="w-3.5 h-3.5 text-slate-400 cursor-pointer hover:text-red-500 ml-1" onClick={() => removeSideById(side.id)}/>
+                  {side.count > 1 && <span className="text-emerald-600 font-bold bg-emerald-100 px-2 py-0.5 rounded-lg">x{side.count}</span>}
+                  <X className="w-4 h-4 text-slate-400 cursor-pointer hover:text-red-500 ml-1" onClick={() => removeSideById(side.id)}/>
                 </span>
               ))}
             </div>
@@ -772,9 +757,9 @@ const MainApp = ({ onResetProfile }) => {
             <div className="text-right"><div className="text-xs text-slate-500 mb-1">花費金額</div><div className="text-xl font-bold text-slate-700">${totals.price}</div></div>
           </div>
           {isPerfect211 ? (
-            <button onClick={() => handleCheckout(true)} className="w-full mt-3 bg-emerald-600 text-white font-bold py-3 rounded-xl shadow-lg flex justify-center items-center gap-2 hover:bg-emerald-700 active:scale-[0.98]"><CheckCircle2 className="w-5 h-5" /> 完美 211 餐盤！紀錄並結帳</button>
+            <button onClick={() => handleCheckout(true)} className="w-full mt-3 bg-emerald-600 text-white font-bold py-4 rounded-xl shadow-lg flex justify-center items-center gap-2 hover:bg-emerald-700 active:scale-[0.98] transition-all"><CheckCircle2 className="w-5 h-5" /> 完美 211 餐盤！紀錄並結帳</button>
           ) : (
-            <button onClick={() => handleCheckout(false)} className="w-full mt-3 bg-slate-800 text-white font-bold py-3 rounded-xl shadow-md flex justify-center items-center gap-2 hover:bg-slate-700 active:scale-[0.98]"><ShoppingBag className="w-5 h-5" /> {excessCarb ? '澱粉過多，紀錄這餐 (建議少吃白飯)' : (excessProtein ? '蛋白超量，紀錄這餐' : '尚未達標，紀錄就這樣吃')}</button>
+            <button onClick={() => handleCheckout(false)} className="w-full mt-3 bg-slate-800 text-white font-bold py-4 rounded-xl shadow-md flex justify-center items-center gap-2 hover:bg-slate-700 active:scale-[0.98] transition-all"><ShoppingBag className="w-5 h-5" /> {excessCarb ? '澱粉過多，紀錄這餐 (建議少吃白飯)' : (excessProtein ? '蛋白超量，紀錄這餐' : '尚未達標，紀錄就這樣吃')}</button>
           )}
         </div>
       </div>
