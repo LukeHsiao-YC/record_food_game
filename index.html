@@ -16,7 +16,7 @@
   <!-- 載入 Babel (讓瀏覽器能看懂 JSX 語法) -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   
-  <!-- 載入 Lucide Icons 圖示庫 (改用最新版，解決 forwardRef 錯誤) -->
+  <!-- 載入 Lucide Icons 圖示庫 -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <style>
@@ -93,6 +93,7 @@
     const Save = (props) => <Icon name="save" {...props} />;
     const Settings = (props) => <Icon name="settings" {...props} />;
     const Coffee = (props) => <Icon name="coffee" {...props} />;
+    const PieChart = (props) => <Icon name="pie-chart" {...props} />;
 
     // ==========================================
     // 1. 模擬資料庫與常數設定
@@ -135,17 +136,33 @@
     // ==========================================
     const OnboardingScreen = ({ onComplete }) => {
       const [step, setStep] = useState(1);
-      const [profile, setProfile] = useState({
-        name: '', gender: 'female', age: 30, height: 160, weight: 65, activity: '1.2', goal: '0'
+      
+      // 自動載入先前的設定，避免每次都要重填
+      const [profile, setProfile] = useState(() => {
+        const saved = localStorage.getItem('health_select_profile');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          return {
+            ...parsed,
+            dietType: parsed.dietType || 'standard',
+            customMacros: parsed.customMacros || { pro: 25, carb: 25, veg: 50 }
+          };
+        }
+        return {
+          name: '', gender: 'female', age: 30, height: 160, weight: 65, activity: '1.2', goal: '0',
+          dietType: 'standard', // 'standard', 'vegetarian', 'fat_loss', 'custom'
+          customMacros: { pro: 25, carb: 25, veg: 50 }
+        };
       });
+
       const [tdee, setTdee] = useState(0);
       const [targetKcal, setTargetKcal] = useState(0);
 
       useEffect(() => {
         let bmr = 0;
-        const age = parseInt(profile.age);
-        const weight = parseFloat(profile.weight);
-        const height = parseFloat(profile.height);
+        const age = parseInt(profile.age) || 0;
+        const weight = parseFloat(profile.weight) || 0;
+        const height = parseFloat(profile.height) || 0;
 
         if (age >= 19) {
           bmr = (10 * weight) + (6.25 * height) - (5 * age) + (profile.gender === 'male' ? 5 : -161);
@@ -166,6 +183,14 @@
       }, [profile]);
 
       const handleStart = () => {
+        // 自訂比例防呆
+        if (profile.dietType === 'custom') {
+          const sum = parseFloat(profile.customMacros.pro) + parseFloat(profile.customMacros.carb) + parseFloat(profile.customMacros.veg);
+          if (sum !== 100) {
+            alert('自訂比例加總必須剛好等於 100% 喔！目前為：' + sum + '%');
+            return;
+          }
+        }
         localStorage.setItem('health_select_profile', JSON.stringify(profile));
         onComplete();
       };
@@ -179,18 +204,19 @@
 
       return (
         <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4 font-sans text-slate-800">
-          <div className="w-full max-w-md bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100">
+          <div className="w-full max-w-md bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100 mb-6 mt-4">
             <div className="bg-emerald-600 p-6 text-white">
-              <h1 className="text-2xl font-bold flex items-center gap-2"><User className="w-6 h-6 mr-2" /> 健康選食助手設定</h1>
+              <h1 className="text-2xl font-bold flex items-center gap-2"><User className="w-6 h-6 mr-1" /> 健康選食助手設定</h1>
               <p className="text-emerald-50 opacity-90 text-sm mt-1">為您精準規劃專屬超商營養配額</p>
               <div className="flex gap-2 mt-6">
-                {[1, 2, 3].map((s) => (
+                {[1, 2, 3, 4].map((s) => (
                   <div key={s} className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${s <= step ? 'bg-white' : 'bg-emerald-800/30'}`} />
                 ))}
               </div>
             </div>
 
             <div className="p-8">
+              {/* Step 1 */}
               {step === 1 && (
                 <div className="space-y-6">
                   <div className="space-y-4">
@@ -211,9 +237,10 @@
                 </div>
               )}
 
+              {/* Step 2 */}
               {step === 2 && (
                 <div className="space-y-4">
-                  <h3 className="text-lg font-bold flex items-center gap-2"><Activity className="w-5 h-5 text-emerald-600 mr-2"/> 日常活動強度</h3>
+                  <h3 className="text-lg font-bold flex items-center gap-2"><Activity className="w-5 h-5 text-emerald-600 mr-1"/> 日常活動強度</h3>
                   <div className="space-y-2">
                     {activityOptions.map((opt) => (
                       <button key={opt.value} onClick={() => setProfile({...profile, activity: opt.value})} className={`w-full p-4 flex items-center gap-4 rounded-2xl border-2 text-left transition-all ${profile.activity === opt.value ? 'border-emerald-500 bg-emerald-50 shadow-sm' : 'border-slate-50 hover:bg-slate-50'}`}>
@@ -228,10 +255,11 @@
                 </div>
               )}
 
+              {/* Step 3 */}
               {step === 3 && (
                 <div className="space-y-6 text-center">
                   <div className="bg-emerald-50 rounded-3xl p-6 border border-emerald-100">
-                    <p className="text-emerald-700 text-sm font-semibold uppercase tracking-wider mb-2">專屬營養建議配額</p>
+                    <p className="text-emerald-700 text-sm font-semibold uppercase tracking-wider mb-2">專屬總熱量配額</p>
                     <div className="flex justify-around items-end">
                       <div>
                         <span className="text-xs text-slate-500 block">您的 TDEE</span>
@@ -245,8 +273,8 @@
                     </div>
                   </div>
 
-                  <div className="space-y-4 text-left">
-                    <h3 className="text-sm font-bold flex items-center gap-2 px-2"><Target className="w-4 h-4 text-emerald-600 mr-2"/> 健康管理目標</h3>
+                  <div className="space-y-3 text-left">
+                    <h3 className="text-sm font-bold flex items-center gap-2 px-1"><Target className="w-4 h-4 text-emerald-600"/> 健康管理目標</h3>
                     <div className="flex gap-2">
                       {[{ val: '0', label: '維持現況' }, { val: '0.3', label: '健康輕體' }, { val: '0.5', label: '積極管理' }].map((g) => (
                         <button key={g.val} onClick={() => setProfile({...profile, goal: g.val})} className={`flex-1 py-3 px-1 rounded-xl border text-sm font-bold transition-all ${profile.goal === g.val ? 'bg-emerald-600 text-white border-emerald-600 shadow-md' : 'border-slate-200 text-slate-500 hover:bg-slate-50'}`}>
@@ -254,11 +282,79 @@
                         </button>
                       ))}
                     </div>
-                    <p className="text-[10px] text-slate-400 px-2 flex items-start gap-1">
-                      <Info className="w-3 h-3 mt-0.5 flex-shrink-0 mr-1" />
-                      {parseInt(profile.age) < 18 ? "兒童與青少年建議以「維持體重」搭配運動為主，避免極端節食影響發育。" : "適當的進度能維持代謝健康並防止復胖。"}
-                    </p>
+                    
+                    {/* 顯示每週減輕與每日熱量赤字 */}
+                    <div className="bg-slate-50 p-3 rounded-xl mt-3 text-[13px] text-slate-600 font-medium">
+                      {profile.goal === '0' && <span className="flex items-start gap-1.5"><Info className="w-4 h-4 flex-shrink-0 text-slate-400 mt-0.5"/> 選擇維持現況，系統將不刻意製造熱量赤字，旨在維持現有體重與體態。</span>}
+                      {profile.goal === '0.3' && <span className="flex items-start gap-1.5"><Info className="w-4 h-4 flex-shrink-0 text-blue-500 mt-0.5"/> 預估每週約減少 <b className="text-blue-600">0.3</b> 公斤。<br/>(每日需創造約 330 大卡的熱量赤字)</span>}
+                      {profile.goal === '0.5' && <span className="flex items-start gap-1.5"><Info className="w-4 h-4 flex-shrink-0 text-orange-500 mt-0.5"/> 預估每週約減少 <b className="text-orange-600">0.5</b> 公斤。<br/>(每日需創造約 550 大卡的熱量赤字)</span>}
+                    </div>
+
+                    {parseInt(profile.age) < 18 && (
+                      <p className="text-[10px] text-red-500 px-2 flex items-start gap-1 mt-2">
+                        <AlertTriangle className="w-3 h-3 mt-0.5 flex-shrink-0" />
+                        兒童與青少年建議以「維持體重」搭配運動為主，避免極端節食影響發育。
+                      </p>
+                    )}
                   </div>
+                </div>
+              )}
+
+              {/* Step 4 (新增): 進階飲食比例 */}
+              {step === 4 && (
+                <div className="space-y-5 text-left animate-in fade-in slide-in-from-right-4">
+                  <h3 className="text-lg font-bold flex items-center gap-2"><PieChart className="w-5 h-5 text-emerald-600 mr-1"/> 選擇飲食比例</h3>
+                  
+                  <div className="space-y-3">
+                    <button onClick={() => setProfile({...profile, dietType: 'standard'})} className={`w-full p-4 rounded-2xl border-2 text-left transition-all ${profile.dietType === 'standard' ? 'border-emerald-500 bg-emerald-50 shadow-sm' : 'border-slate-50 hover:bg-slate-50 bg-slate-50/50'}`}>
+                      <div className="font-bold text-slate-700">標準 211 餐盤</div>
+                      <div className="text-xs text-slate-500 mt-1">碳水 40-50%，蛋白質依體重計算</div>
+                    </button>
+                    
+                    <button onClick={() => setProfile({...profile, dietType: 'vegetarian'})} className={`w-full p-4 rounded-2xl border-2 text-left transition-all ${profile.dietType === 'vegetarian' ? 'border-emerald-500 bg-emerald-50 shadow-sm' : 'border-slate-50 hover:bg-slate-50 bg-slate-50/50'}`}>
+                      <div className="font-bold text-slate-700">素食者 211V</div>
+                      <div className="text-xs text-slate-500 mt-1">蛋白質 25%、澱粉 25%、蔬菜 50%</div>
+                    </button>
+
+                    <button onClick={() => setProfile({...profile, dietType: 'fat_loss'})} className={`w-full p-4 rounded-2xl border-2 text-left transition-all ${profile.dietType === 'fat_loss' ? 'border-emerald-500 bg-emerald-50 shadow-sm' : 'border-slate-50 hover:bg-slate-50 bg-slate-50/50'}`}>
+                      <div className="font-bold text-slate-700">減脂族群 211A (高胰島素阻抗適用)</div>
+                      <div className="text-xs text-slate-500 mt-1">蛋白質 30%、澱粉 20%、蔬菜 50%</div>
+                    </button>
+
+                    <button onClick={() => setProfile({...profile, dietType: 'custom'})} className={`w-full p-4 rounded-2xl border-2 text-left transition-all ${profile.dietType === 'custom' ? 'border-emerald-500 bg-emerald-50 shadow-sm' : 'border-slate-50 hover:bg-slate-50 bg-slate-50/50'}`}>
+                      <div className="font-bold text-slate-700">自行設定比例</div>
+                      <div className="text-xs text-slate-500 mt-1">自由調配三大營養素佔比</div>
+                    </button>
+                  </div>
+
+                  {/* 自行設定的輸入區塊 */}
+                  {profile.dietType === 'custom' && (
+                    <div className="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
+                      <div className="grid grid-cols-3 gap-2">
+                        <div className="text-center">
+                          <label className="text-[11px] font-bold text-blue-600 block mb-1">蛋白質 %</label>
+                          <input type="number" className="w-full text-center p-2 rounded-lg border border-blue-200 outline-none focus:ring-1 focus:ring-blue-500" value={profile.customMacros.pro} onChange={(e) => setProfile({...profile, customMacros: {...profile.customMacros, pro: e.target.value}})} />
+                        </div>
+                        <div className="text-center">
+                          <label className="text-[11px] font-bold text-orange-600 block mb-1">澱粉 %</label>
+                          <input type="number" className="w-full text-center p-2 rounded-lg border border-orange-200 outline-none focus:ring-1 focus:ring-orange-500" value={profile.customMacros.carb} onChange={(e) => setProfile({...profile, customMacros: {...profile.customMacros, carb: e.target.value}})} />
+                        </div>
+                        <div className="text-center">
+                          <label className="text-[11px] font-bold text-emerald-600 block mb-1">蔬菜 %</label>
+                          <input type="number" className="w-full text-center p-2 rounded-lg border border-emerald-200 outline-none focus:ring-1 focus:ring-emerald-500" value={profile.customMacros.veg} onChange={(e) => setProfile({...profile, customMacros: {...profile.customMacros, veg: e.target.value}})} />
+                        </div>
+                      </div>
+                      <div className={`text-xs text-center mt-3 font-bold ${parseFloat(profile.customMacros.pro) + parseFloat(profile.customMacros.carb) + parseFloat(profile.customMacros.veg) === 100 ? 'text-emerald-600' : 'text-red-500'}`}>
+                        總和：{parseFloat(profile.customMacros.pro) + parseFloat(profile.customMacros.carb) + parseFloat(profile.customMacros.veg)} %
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="bg-red-50 text-red-600 text-[11px] p-3 rounded-lg flex items-start gap-1.5 mt-2">
+                    <AlertTriangle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                    <span><b>警語：</b>非標準之特殊飲食比例，建議尋求專業醫師、營養師協助指導飲食計畫，以免影響健康。</span>
+                  </div>
+
                 </div>
               )}
 
@@ -266,7 +362,7 @@
                 {step > 1 && (
                   <button onClick={() => setStep(step - 1)} className="flex-1 py-4 rounded-2xl border border-slate-200 font-bold text-slate-600 hover:bg-slate-50">返回</button>
                 )}
-                {step < 3 ? (
+                {step < 4 ? (
                   <button onClick={() => setStep(step + 1)} className="flex-[2] py-4 rounded-2xl bg-emerald-600 text-white font-bold shadow-lg shadow-emerald-200 hover:bg-emerald-700 flex items-center justify-center gap-2">下一步 <ChevronRight className="w-5 h-5 ml-1" /></button>
                 ) : (
                   <button onClick={handleStart} className="flex-[2] py-4 rounded-2xl bg-emerald-600 text-white font-bold shadow-lg shadow-emerald-200 hover:bg-emerald-700 flex items-center justify-center gap-2">開始健康選食！ <Save className="w-5 h-5 ml-1" /></button>
@@ -318,17 +414,39 @@
           setUserQuota({ kcal: mealKcal, sod: 800 }); 
 
           let carbMaxCalc, proMinCalc, proMaxCalc, fibMinCalc;
-          if (age < 18) {
-            carbMaxCalc = Math.round((mealKcal * 0.5) / 4); 
-            proMinCalc = Math.round((weight * 1.5) / 3); 
-            proMaxCalc = Math.round((weight * 2.5) / 3); 
-            fibMinCalc = Math.max(3, Math.round((age + 5) / 3)); 
+          const dietType = profile.dietType || 'standard';
+
+          // 根據選擇的飲食比例計算目標
+          if (dietType === 'standard') {
+            if (age < 18) {
+              carbMaxCalc = Math.round((mealKcal * 0.5) / 4); 
+              proMinCalc = Math.round((weight * 1.5) / 3); 
+              proMaxCalc = Math.round((weight * 2.5) / 3); 
+              fibMinCalc = Math.max(3, Math.round((age + 5) / 3)); 
+            } else {
+              carbMaxCalc = Math.round((mealKcal * 0.4) / 4); 
+              proMinCalc = Math.max(15, Math.round((weight * 1.2) / 3)); 
+              proMaxCalc = Math.max(40, Math.round((weight * 2.0) / 3)); 
+              fibMinCalc = 6;
+            }
           } else {
-            carbMaxCalc = Math.round((mealKcal * 0.4) / 4); 
-            proMinCalc = Math.max(15, Math.round((weight * 1.2) / 3)); 
-            proMaxCalc = Math.max(40, Math.round((weight * 2.0) / 3)); 
-            fibMinCalc = 6;
+            // 進階比例 (素食 / 減脂 / 自訂)
+            let carbPercent, proPercent;
+            if (dietType === 'vegetarian') {
+              carbPercent = 0.25; proPercent = 0.25;
+            } else if (dietType === 'fat_loss') {
+              carbPercent = 0.20; proPercent = 0.30;
+            } else if (dietType === 'custom') {
+              carbPercent = (parseFloat(profile.customMacros?.carb) || 25) / 100;
+              proPercent = (parseFloat(profile.customMacros?.pro) || 25) / 100;
+            }
+            
+            carbMaxCalc = Math.round((mealKcal * carbPercent) / 4);
+            proMinCalc = Math.round((mealKcal * proPercent) / 4);
+            proMaxCalc = proMinCalc + 15; // 容許值
+            fibMinCalc = age < 18 ? Math.max(3, Math.round((age + 5) / 3)) : 6;
           }
+
           setMacroTargets({ carbMax: carbMaxCalc, proMin: proMinCalc, proMax: proMaxCalc, fibMin: fibMinCalc });
         }
 
@@ -449,7 +567,7 @@
         const updatedHistory = [newRecord, ...history];
         setHistory(updatedHistory);
         localStorage.setItem('meal_history', JSON.stringify(updatedHistory));
-        alert(isPerfect ? '🎉 太棒了！已將這筆完美的 211 餐盤加入您的健康紀錄！' : '📝 已紀錄這筆餐點。下次可以試著多加點蔬菜或減少澱粉喔！');
+        alert(isPerfect ? '🎉 太棒了！已將這筆完美的餐盤加入您的健康紀錄！' : '📝 已紀錄這筆餐點。下次可以試著多加點蔬菜或減少澱粉喔！');
         resetSelection();
         setShowHistory(true);
       };
@@ -516,7 +634,7 @@
         let comment = '目前還沒有足夠的紀錄，快去挑選您的第一餐吧！';
 
         if (totalMeals > 0) {
-          if (perfectRate >= 80) { grade = { score: 'S', color: 'text-emerald-600', bg: 'bg-emerald-100' }; comment = '🏆 飲食大師！您極度自律，完美掌握了 211 餐盤的精髓！'; }
+          if (perfectRate >= 80) { grade = { score: 'S', color: 'text-emerald-600', bg: 'bg-emerald-100' }; comment = '🏆 飲食大師！您極度自律，完美掌握了進階餐盤的精髓！'; }
           else if (perfectRate >= 50) { grade = { score: 'A', color: 'text-blue-600', bg: 'bg-blue-100' }; comment = '👍 表現優良！若能再稍稍注意澱粉份量，就能達到完美的 S 級囉！'; }
           else if (perfectRate >= 20) {
             grade = { score: 'B', color: 'text-yellow-600', bg: 'bg-yellow-100' };
@@ -535,7 +653,7 @@
                 <h2 className="text-lg font-bold flex items-center gap-2 mb-4 relative z-10"><Award className={`w-6 h-6 ${grade.color}`} /> 本週成績單</h2>
                 <div className="flex items-end gap-4 mb-5 relative z-10">
                   <div className={`text-6xl font-black ${grade.color} drop-shadow-sm`}>{grade.score}</div>
-                  <div className="pb-2"><div className="text-sm font-bold text-slate-700">完美 211 達成率</div><div className="text-2xl font-bold text-slate-500">{perfectRate}% <span className="text-xs text-slate-400 font-normal">({perfectMeals}/{totalMeals}餐)</span></div></div>
+                  <div className="pb-2"><div className="text-sm font-bold text-slate-700">目標達成率</div><div className="text-2xl font-bold text-slate-500">{perfectRate}% <span className="text-xs text-slate-400 font-normal">({perfectMeals}/{totalMeals}餐)</span></div></div>
                 </div>
                 <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-sm text-slate-700 leading-relaxed mb-4">{comment}</div>
                 <div className="grid grid-cols-2 gap-3">
@@ -655,7 +773,7 @@
             </div>
 
             <div className="bg-white rounded-3xl p-5 shadow-sm border border-slate-100">
-              <h3 className="font-bold mb-4 flex items-center gap-2"><Utensils className="w-5 h-5 text-slate-500"/> 專屬 211 比例</h3>
+              <h3 className="font-bold mb-4 flex items-center gap-2"><Utensils className="w-5 h-5 text-slate-500"/> 目標比例分析</h3>
               <div className="space-y-5">
                 <div>
                   <div className="flex justify-between text-xs mb-1"><span className="font-semibold text-orange-700">🍚 碳水/澱粉 (個人上限 {macroTargets.carbMax}g)</span><span className={excessCarb ? 'text-red-500 font-bold' : 'text-orange-600 font-bold'}>{totals.carb.toFixed(1)}g</span></div>
@@ -663,7 +781,7 @@
                     <div className={`transition-all duration-500 ${excessCarb ? 'bg-red-400' : 'bg-orange-300'}`} style={{ width: `${Math.min((adjustedMain.carb/macroTargets.carbMax)*100, 100)}%` }}></div>
                     {addedSides.map((s, i) => s.carb > 0 && <div key={i} className={`border-l border-white/30 transition-all duration-500 ${excessCarb ? 'bg-red-500' : 'bg-orange-400'}`} style={{ width: `${(s.carb/macroTargets.carbMax)*100}%` }}></div>)}
                   </div>
-                  {excessCarb && <p className="text-[10px] text-red-500 mt-1.5 flex items-center gap-1"><AlertTriangle className="w-3 h-3"/> 澱粉超標！破壞211比例，建議減少份量。</p>}
+                  {excessCarb && <p className="text-[10px] text-red-500 mt-1.5 flex items-center gap-1"><AlertTriangle className="w-3 h-3"/> 澱粉超標！破壞比例，建議減少份量。</p>}
                 </div>
                 <div>
                   <div className="flex justify-between text-xs mb-1"><span className="font-semibold text-blue-700">🥩 蛋白質 (個人目標 {macroTargets.proMin}-{macroTargets.proMax}g)</span><span className={excessProtein ? 'text-red-500 font-bold' : (!needProtein ? 'text-emerald-500 font-bold' : 'text-slate-500')}>{totals.pro.toFixed(1)}g</span></div>
