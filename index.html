@@ -9,15 +9,15 @@
   <!-- 載入 Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   
-  <!-- 載入 React 核心套件 -->
+  <!-- 載入 React 核心套件 (注意順序，lucide-react 依賴 React) -->
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   
   <!-- 載入 Babel (讓瀏覽器能看懂 JSX 語法) -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   
-  <!-- 載入 Lucide Icons 圖示庫 -->
-  <script src="https://unpkg.com/lucide-react@0.263.1/dist/umd/lucide-react.min.js"></script>
+  <!-- 載入 Lucide Icons 圖示庫 (改用最新版，解決 forwardRef 錯誤) -->
+  <script src="https://unpkg.com/lucide@latest"></script>
 
   <style>
     /* 手機版專屬 UI 優化 CSS */
@@ -46,12 +46,53 @@
 
   <!-- 主要程式碼邏輯 -->
   <script type="text/babel">
-    const { useState, useEffect } = React;
-    const { 
-      Search, Plus, X, AlertCircle, CheckCircle2, ChevronLeft, ChevronRight, 
-      ChevronDown, ShoppingBag, Utensils, Info, Edit, Clock, ListFilter, 
-      AlertTriangle, CalendarDays, Award, TrendingUp, User, Activity, Target, Save, Settings, Coffee
-    } = lucideReact;
+    const { useState, useEffect, useRef } = React;
+
+    // 自訂的 Lucide Icon 元件封裝 (因為 UMD 版本的 lucide 不提供 React 元件)
+    const Icon = ({ name, className = "", ...props }) => {
+      const iconRef = useRef(null);
+
+      useEffect(() => {
+        if (iconRef.current && window.lucide) {
+          lucide.createIcons({
+            icons: { [name]: window.lucide.icons[name] },
+            nameAttr: 'data-lucide',
+            attrs: {
+              class: className,
+              ...props
+            }
+          });
+        }
+      }, [name, className, props]);
+
+      return <i ref={iconRef} data-lucide={name}></i>;
+    };
+
+    // 取代原本的 Lucide React 引入，改用封裝好的 Icon 元件
+    const Search = (props) => <Icon name="search" {...props} />;
+    const Plus = (props) => <Icon name="plus" {...props} />;
+    const X = (props) => <Icon name="x" {...props} />;
+    const AlertCircle = (props) => <Icon name="alert-circle" {...props} />;
+    const CheckCircle2 = (props) => <Icon name="check-circle-2" {...props} />;
+    const ChevronLeft = (props) => <Icon name="chevron-left" {...props} />;
+    const ChevronRight = (props) => <Icon name="chevron-right" {...props} />;
+    const ChevronDown = (props) => <Icon name="chevron-down" {...props} />;
+    const ShoppingBag = (props) => <Icon name="shopping-bag" {...props} />;
+    const Utensils = (props) => <Icon name="utensils" {...props} />;
+    const Info = (props) => <Icon name="info" {...props} />;
+    const Edit = (props) => <Icon name="edit" {...props} />;
+    const Clock = (props) => <Icon name="clock" {...props} />;
+    const ListFilter = (props) => <Icon name="list-filter" {...props} />;
+    const AlertTriangle = (props) => <Icon name="alert-triangle" {...props} />;
+    const CalendarDays = (props) => <Icon name="calendar-days" {...props} />;
+    const Award = (props) => <Icon name="award" {...props} />;
+    const TrendingUp = (props) => <Icon name="trending-up" {...props} />;
+    const User = (props) => <Icon name="user" {...props} />;
+    const Activity = (props) => <Icon name="activity" {...props} />;
+    const Target = (props) => <Icon name="target" {...props} />;
+    const Save = (props) => <Icon name="save" {...props} />;
+    const Settings = (props) => <Icon name="settings" {...props} />;
+    const Coffee = (props) => <Icon name="coffee" {...props} />;
 
     // ==========================================
     // 1. 模擬資料庫與常數設定
@@ -140,7 +181,7 @@
         <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4 font-sans text-slate-800">
           <div className="w-full max-w-md bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100">
             <div className="bg-emerald-600 p-6 text-white">
-              <h1 className="text-2xl font-bold flex items-center gap-2"><User className="w-6 h-6" /> 健康選食助手設定</h1>
+              <h1 className="text-2xl font-bold flex items-center gap-2"><User className="w-6 h-6 mr-2" /> 健康選食助手設定</h1>
               <p className="text-emerald-50 opacity-90 text-sm mt-1">為您精準規劃專屬超商營養配額</p>
               <div className="flex gap-2 mt-6">
                 {[1, 2, 3].map((s) => (
@@ -172,7 +213,7 @@
 
               {step === 2 && (
                 <div className="space-y-4">
-                  <h3 className="text-lg font-bold flex items-center gap-2"><Activity className="w-5 h-5 text-emerald-600"/> 日常活動強度</h3>
+                  <h3 className="text-lg font-bold flex items-center gap-2"><Activity className="w-5 h-5 text-emerald-600 mr-2"/> 日常活動強度</h3>
                   <div className="space-y-2">
                     {activityOptions.map((opt) => (
                       <button key={opt.value} onClick={() => setProfile({...profile, activity: opt.value})} className={`w-full p-4 flex items-center gap-4 rounded-2xl border-2 text-left transition-all ${profile.activity === opt.value ? 'border-emerald-500 bg-emerald-50 shadow-sm' : 'border-slate-50 hover:bg-slate-50'}`}>
@@ -205,7 +246,7 @@
                   </div>
 
                   <div className="space-y-4 text-left">
-                    <h3 className="text-sm font-bold flex items-center gap-2 px-2"><Target className="w-4 h-4 text-emerald-600"/> 健康管理目標</h3>
+                    <h3 className="text-sm font-bold flex items-center gap-2 px-2"><Target className="w-4 h-4 text-emerald-600 mr-2"/> 健康管理目標</h3>
                     <div className="flex gap-2">
                       {[{ val: '0', label: '維持現況' }, { val: '0.3', label: '健康輕體' }, { val: '0.5', label: '積極管理' }].map((g) => (
                         <button key={g.val} onClick={() => setProfile({...profile, goal: g.val})} className={`flex-1 py-3 px-1 rounded-xl border text-sm font-bold transition-all ${profile.goal === g.val ? 'bg-emerald-600 text-white border-emerald-600 shadow-md' : 'border-slate-200 text-slate-500 hover:bg-slate-50'}`}>
@@ -214,7 +255,7 @@
                       ))}
                     </div>
                     <p className="text-[10px] text-slate-400 px-2 flex items-start gap-1">
-                      <Info className="w-3 h-3 mt-0.5 flex-shrink-0" />
+                      <Info className="w-3 h-3 mt-0.5 flex-shrink-0 mr-1" />
                       {parseInt(profile.age) < 18 ? "兒童與青少年建議以「維持體重」搭配運動為主，避免極端節食影響發育。" : "適當的進度能維持代謝健康並防止復胖。"}
                     </p>
                   </div>
@@ -226,9 +267,9 @@
                   <button onClick={() => setStep(step - 1)} className="flex-1 py-4 rounded-2xl border border-slate-200 font-bold text-slate-600 hover:bg-slate-50">返回</button>
                 )}
                 {step < 3 ? (
-                  <button onClick={() => setStep(step + 1)} className="flex-[2] py-4 rounded-2xl bg-emerald-600 text-white font-bold shadow-lg shadow-emerald-200 hover:bg-emerald-700 flex items-center justify-center gap-2">下一步 <ChevronRight className="w-5 h-5" /></button>
+                  <button onClick={() => setStep(step + 1)} className="flex-[2] py-4 rounded-2xl bg-emerald-600 text-white font-bold shadow-lg shadow-emerald-200 hover:bg-emerald-700 flex items-center justify-center gap-2">下一步 <ChevronRight className="w-5 h-5 ml-1" /></button>
                 ) : (
-                  <button onClick={handleStart} className="flex-[2] py-4 rounded-2xl bg-emerald-600 text-white font-bold shadow-lg shadow-emerald-200 hover:bg-emerald-700 flex items-center justify-center gap-2">開始健康選食！ <Save className="w-5 h-5" /></button>
+                  <button onClick={handleStart} className="flex-[2] py-4 rounded-2xl bg-emerald-600 text-white font-bold shadow-lg shadow-emerald-200 hover:bg-emerald-700 flex items-center justify-center gap-2">開始健康選食！ <Save className="w-5 h-5 ml-1" /></button>
                 )}
               </div>
             </div>
@@ -438,7 +479,7 @@
         return (
           <div className="min-h-screen bg-slate-50 flex flex-col items-center p-4 font-sans text-slate-800 pb-20">
             <div className="w-full max-w-md">
-              <button onClick={() => setCustomInputMode(null)} className="flex items-center text-slate-500 font-medium py-3 mb-2"><ChevronLeft className="w-5 h-5" /> 返回</button>
+              <button onClick={() => setCustomInputMode(null)} className="flex items-center text-slate-500 font-medium py-3 mb-2"><ChevronLeft className="w-5 h-5 mr-1" /> 返回</button>
               <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="bg-emerald-100 p-3 rounded-full text-emerald-600"><Edit className="w-6 h-6" /></div>
@@ -451,7 +492,7 @@
                     <div><label className="block text-sm font-semibold text-orange-600 mb-1">碳水/糖 (g)</label><input type="number" step="0.1" required min="0" className="w-full text-base p-3 bg-orange-50 border border-orange-200 rounded-xl outline-none" value={customMeal.carb} onChange={e => setCustomMeal({...customMeal, carb: e.target.value})} /></div>
                     <div><label className="block text-sm font-semibold text-blue-600 mb-1">蛋白質 (g)</label><input type="number" step="0.1" required min="0" className="w-full text-base p-3 bg-blue-50 border border-blue-200 rounded-xl outline-none" value={customMeal.pro} onChange={e => setCustomMeal({...customMeal, pro: e.target.value})} /></div>
                     <div><label className="block text-sm font-semibold text-emerald-600 mb-1">膳食纖維 (g)</label><input type="number" step="0.1" min="0" className="w-full text-base p-3 bg-emerald-50 border border-emerald-200 rounded-xl outline-none" value={customMeal.fib} onChange={e => setCustomMeal({...customMeal, fib: e.target.value})} /></div>
-                    <div className="col-span-2"><label className="block text-sm font-semibold text-red-600 mb-1 flex items-center gap-1">鈉含量 (mg) <Info className="w-3 h-3"/></label><input type="number" required min="0" className="w-full text-base p-3 bg-red-50 border border-red-200 rounded-xl outline-none" value={customMeal.sod} onChange={e => setCustomMeal({...customMeal, sod: e.target.value})} /></div>
+                    <div className="col-span-2"><label className="block text-sm font-semibold text-red-600 mb-1 flex items-center gap-1">鈉含量 (mg) <Info className="w-3 h-3 ml-1"/></label><input type="number" required min="0" className="w-full text-base p-3 bg-red-50 border border-red-200 rounded-xl outline-none" value={customMeal.sod} onChange={e => setCustomMeal({...customMeal, sod: e.target.value})} /></div>
                     <div className="col-span-2"><label className="block text-sm font-semibold text-slate-600 mb-1">價格 (元)</label><input type="number" min="0" className="w-full text-base p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" value={customMeal.price} onChange={e => setCustomMeal({...customMeal, price: e.target.value})} /></div>
                   </div>
                   <button type="submit" className="w-full mt-6 bg-emerald-600 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-emerald-700 active:scale-[0.98]">{isMain ? '儲存並開始分析' : '加入本餐清單'}</button>
@@ -488,7 +529,7 @@
         return (
           <div className="min-h-screen bg-slate-50 flex flex-col items-center p-4 font-sans text-slate-800 pb-20">
             <div className="w-full max-w-md">
-              <button onClick={() => setShowHistory(false)} className="flex items-center text-slate-500 font-medium py-3 mb-2"><ChevronLeft className="w-5 h-5" /> 返回首頁</button>
+              <button onClick={() => setShowHistory(false)} className="flex items-center text-slate-500 font-medium py-3 mb-2"><ChevronLeft className="w-5 h-5 mr-1" /> 返回首頁</button>
               <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 mb-6 relative overflow-hidden">
                 <div className={`absolute top-0 right-0 w-24 h-24 rounded-bl-[100px] ${grade.bg} -z-0 opacity-50`}></div>
                 <h2 className="text-lg font-bold flex items-center gap-2 mb-4 relative z-10"><Award className={`w-6 h-6 ${grade.color}`} /> 本週成績單</h2>
@@ -555,11 +596,11 @@
               </div>
 
               {recentMeals.length > 0 && !searchTerm && (
-                <div className="mb-6"><h2 className="flex items-center gap-2 text-sm font-bold text-slate-500 mb-3 px-1"><Clock className="w-4 h-4" /> 最近吃過</h2><div className="space-y-3">{recentMeals.map(meal => renderMealItem(meal))}</div></div>
+                <div className="mb-6"><h2 className="flex items-center gap-2 text-sm font-bold text-slate-500 mb-3 px-1"><Clock className="w-4 h-4 mr-1" /> 最近吃過</h2><div className="space-y-3">{recentMeals.map(meal => renderMealItem(meal))}</div></div>
               )}
 
               <div className="mb-6">
-                <h2 className="flex items-center gap-2 text-sm font-bold text-slate-500 mb-3 px-1"><ListFilter className="w-4 h-4" /> 商品總覽</h2>
+                <h2 className="flex items-center gap-2 text-sm font-bold text-slate-500 mb-3 px-1"><ListFilter className="w-4 h-4 mr-1" /> 商品總覽</h2>
                 <div className="space-y-4">
                   {Object.keys(groupedMains).map(category => {
                     const isExpanded = searchTerm !== '' || expandedCategories[category];
@@ -592,7 +633,7 @@
       return (
         <div className="min-h-screen bg-slate-50 flex flex-col items-center p-4 font-sans text-slate-800 pb-[280px]">
           <div className="w-full max-w-md space-y-4">
-            <button onClick={resetSelection} className="flex items-center text-slate-500 font-medium py-3"><ChevronLeft className="w-5 h-5" /> 重新選擇主食</button>
+            <button onClick={resetSelection} className="flex items-center text-slate-500 font-medium py-3"><ChevronLeft className="w-5 h-5 mr-1" /> 重新選擇主食</button>
 
             <div className="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 relative overflow-hidden">
               <div className={`absolute top-0 left-0 w-2 h-full ${mainLight.color}`}></div>
